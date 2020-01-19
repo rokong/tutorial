@@ -1,4 +1,5 @@
 from anytree import Node, RenderTree
+from anytree.search import findall
 import createData as data
 
 def transTags(tags, dic):
@@ -49,29 +50,32 @@ def searchResult(node, restMine):
 # Start Main
 if __name__=="__main__":
     
-    '''
-    rootNode = Node("root", children=[
-        Node("0", children=[
-            Node("1", result="a" , children=[
-                Node("2", result="b")
-            ]),
-            Node("2", result="c")]),
-        Node("1", children=[
-            Node("3", result="d")
-        ])
-    ])
-    '''
-    
     #set root data source
     rootNode = data.root
     
-    #print default data
-    print(RenderTree(rootNode), '\n')
+    print("\n\n\n\n")
+    print(RenderTree(rootNode))
     
-    myTags = ['메딕', '서포트', '프틸', '와파린']
+    print(len(findall(rootNode, lambda node : node.is_leaf==True)))
     
+    #print(data.dicTag)
+    
+    myTags = []
+    
+    tag = ""
+    for i in range(5):
+        #tag = input(str(i+1)+'번째 태그를 입력하세요 : ')
+        if tag:
+            myTags.insert(i, tag)
+    
+    myTags = ['군중제어', '메이어']
+    
+    #transforming
     myTags = transTags(myTags, data.dicTag)
     
+    #print(myTags)
+    
     #search
+    print('\n<조합 가능한 대원들>')
     searchResult(rootNode, myTags)
 # End Main

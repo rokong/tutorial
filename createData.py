@@ -1,5 +1,5 @@
 from anytree import Node, RenderTree
-from anytree.search import find
+from anytree.search import find, findall
 
 #open txt file
 try:
@@ -21,28 +21,38 @@ for line in lines:
 
 #print(arrData)
 
-def searchAddNode(node, crew, tags):
-    #print(node, crew, tags)
+def searchAddNode(CurNode, crew, tags):
+    #print('\n', CurNode, crew, tags)
     
     tagLen = len(tags)
     
     #keep current children
     children = []
-    for child in node.children:
+    childrenName = []
+    for child in CurNode.children:
         children.append(child)
+        childrenName.append(child.name)
     
     if tagLen > 1:
-        if find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2):
+        if tags[0] in childrenName:
             #print('taglen>1 && find')
-            searchAddNode(find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2), crew, tags[1:])
+            #print(node, crew, tags)
+            #print(RenderTree(node), '\n')
+            searchAddNode(children[childrenName.index(tags[0])], crew, tags[1:])
         else:
+            #print("###############33")
             #print('taglen>1 && !find')
-            searchAddNode(Node(tags[0], parent=node), crew, tags[1:])
+            #print(node, crew, tags)
+            #print(RenderTree(node), '\n')
+            searchAddNode(Node(tags[0], parent=CurNode), crew, tags[1:])
     elif tagLen == 1:
-        if find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2):
-            if not hasattr(find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2), 'result'):
+        if tags[0] in childrenName:
+            if not hasattr(children[childrenName.index(tags[0])], 'result'):
                 #print('taglen==1 && find && not hasattr')
-                find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2).result = crew
+                #print('\n', CurNode, crew, tags)
+                #print(dicTag)
+                #print(find(CurNode, filter_ = lambda node: node.name==tags[0], maxlevel=CurNode.depth+1))
+                children[childrenName.index(tags[0])].result = crew
                 return
             else:
                 #print('taglen==1 && find && hasattr')
@@ -50,7 +60,7 @@ def searchAddNode(node, crew, tags):
                 return
         else:
             #print('taglen==1 && !find')
-            newChild = Node(tags[0], parent=node, result=crew)
+            Node(tags[0], parent=CurNode, result=crew)
     else:
         #print('taglen==0')
         return
