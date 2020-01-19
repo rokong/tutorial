@@ -1,37 +1,56 @@
 from anytree import Node, RenderTree
 import createData as data
 
-print(data.dicTag)
+def transTags(tags, dic):
+    result = []
+    
+    for k, v in dic.items():
+        if v in tags:
+            result.insert(tags.index(v), k)
+    
+    result.sort()
+    
+    return result
+    
+# End transTags()
 
 def ResultAndPath(node):
-    print("<"+node.result+"> ", end="")
+    print("<"+data.dicCrew[node.result]+"> ", end="")
     
     for e in node._path[1:-1]:
-        print(e.name, end=", ")
+        print(data.dicTag[e.name], end=", ")
     
-    print(node.name)
+    print(data.dicTag[node.name])
     
     return
 # End ResultAndPath()
 
 def searchResult(node, restMine):
+    #print(node, restMine)
+    
     if hasattr(node, 'result'):
         ResultAndPath(node)
     
     if node.is_leaf:
+        #print("is leaf")
         return
     
     for i in restMine:
+        #print(i, type(i))
         for j in node.children:
+            #print("print j.name", j.name, type(j))
             if i == j.name:
+                #print("before recursive")
                 searchResult(j, restMine[restMine.index(i)+1:])
     
     return
 # End Search()
 
+# Start Main
 if __name__=="__main__":
     
-    root = Node("root", children=[
+    '''
+    rootNode = Node("root", children=[
         Node("0", children=[
             Node("1", result="a" , children=[
                 Node("2", result="b")
@@ -41,9 +60,18 @@ if __name__=="__main__":
             Node("3", result="d")
         ])
     ])
-
-    # Start Main
-    print(RenderTree(root))
-
-    searchResult(root, ["0", "1", "2"])
+    '''
+    
+    #set root data source
+    rootNode = data.root
+    
+    #print default data
+    print(RenderTree(rootNode), '\n')
+    
+    myTags = ['메딕', '서포트', '프틸', '와파린']
+    
+    myTags = transTags(myTags, data.dicTag)
+    
+    #search
+    searchResult(rootNode, myTags)
 # End Main

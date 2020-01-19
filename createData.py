@@ -21,9 +21,8 @@ for line in lines:
 
 #print(arrData)
 
-
-def addNode(node, crew, tags):
-    print(node, crew, tags)
+def searchAddNode(node, crew, tags):
+    #print(node, crew, tags)
     
     tagLen = len(tags)
     
@@ -34,30 +33,29 @@ def addNode(node, crew, tags):
     
     if tagLen > 1:
         if find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2):
-            print('taglen>1 && find')
-            newChild = Node(tags[0], parent=node)
-            addNode(find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2), crew, tags[1:])
+            #print('taglen>1 && find')
+            searchAddNode(find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2), crew, tags[1:])
         else:
-            print('taglen>1 && !find')
-            addNode(Node(tags[0], parent=node), crew, tags[1:])
+            #print('taglen>1 && !find')
+            searchAddNode(Node(tags[0], parent=node), crew, tags[1:])
     elif tagLen == 1:
         if find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2):
             if not hasattr(find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2), 'result'):
-                print('taglen==1 && find && not hasattr')
+                #print('taglen==1 && find && not hasattr')
                 find(node, lambda node: node.name==tags[0], maxlevel=node.depth+2).result = crew
                 return
             else:
-                print('taglen==1 && find && hasattr')
+                #print('taglen==1 && find && hasattr')
                 print("duplicate!")
                 return
         else:
-            print('taglen==1 && !find')
+            #print('taglen==1 && !find')
             newChild = Node(tags[0], parent=node, result=crew)
     else:
-        print('taglen==0')
+        #print('taglen==0')
         return
-# End addNode()
-    
+# End searchAddNode()
+
 #make dictionaries from array
 dicCrew = {}    #column = 1
 dicTag = {}     #column != 1
@@ -67,7 +65,7 @@ tagIdx = len(dicTag)
 
 cols = []
 
-rNode = Node("rNode")
+root = Node("root")
 
 inputCrew = -1
 inputTags = []
@@ -100,11 +98,10 @@ for row in arrData:
     
     inputTags.sort()
     
-    print(rNode, inputCrew, inputTags)
-    addNode(rNode, inputCrew, inputTags)
+    searchAddNode(root, inputCrew, inputTags)
 # End row loop
 
 #print(dicCrew)
 #print(dicTag)
 
-print(RenderTree(rNode))
+#print(RenderTree(root))
