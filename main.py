@@ -1,4 +1,7 @@
 from anytree import Node, RenderTree
+import createData as data
+
+print(data.dicTag)
 
 def ResultAndPath(node):
     print("<"+node.result+"> ", end="")
@@ -26,18 +29,21 @@ def searchResult(node, restMine):
     return
 # End Search()
 
-root = Node("root", children=[
-    Node("0", children=[
-        Node("1", result="a" , children=[
-            Node("2", result="b")
-        ]),
-        Node("2", result="c")]),
-    Node("1", children=[
-        Node("3", result="d")
+if __name__=="__main__":
+    
+    root = Node("root", children=[
+        Node("0", children=[
+            Node("1", result="a" , children=[
+                Node("2", result="b")
+            ]),
+            Node("2", result="c")]),
+        Node("1", children=[
+            Node("3", result="d")
+        ])
     ])
-])
 
-# Start Main
-print(RenderTree(root))
+    # Start Main
+    print(RenderTree(root))
 
-searchResult(root, ["0", "1", "2"])
+    searchResult(root, ["0", "1", "2"])
+# End Main
