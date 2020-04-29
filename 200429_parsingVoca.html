@@ -9,11 +9,39 @@
   #output { padding: 10px; box-shadow: 0 0 5px #777; border-radius: 5px; margin: 10px; }
   iframe#input { display: none; }
   #processor { height: 70px; }
+
+  .no-print{ display: none !important; }
+  /*
+  .print-only{ display: none; }
+  */
+
+  @media print{
+    /*
+    .no-print{ display: none !important; }
+    .print-only{ display: block; }
+    */
+  }
+
+  @page{
+      margin: 0px auto;
+  }
+
   </style>
 </head>
 
 <body>
-  <div>
+
+    <div class="print-only">
+        <h1>Hackers Voca Test</h1>
+        <table>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+  <div class="no-print">
     <!-- embed the pdftotext web app as an iframe -->
     <iframe id="processor" src="https://git.macropus.org/2011/11/pdftotext/"></iframe>
     
@@ -21,7 +49,7 @@
     <div id="output"><div id="intro">Extracting text from a PDF file using only Javascript.<br>Tested in Chrome 16 and Firefox 9.</div></div>
   </div>
   
-  <div>
+  <div class="no-print">
     <!-- the PDF file must be on the same domain as this page -->
     <iframe id="input" src="https://cors-anywhere.herokuapp.com/https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=1&day2=1&question=57&type=2&cate=1&answer=N"></iframe>
     <iframe id="sample" src="https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=1&day2=1&question=57&type=2&cate=1&answer=N"></iframe>
@@ -64,12 +92,63 @@
     
     text = text.substring(text.search('1. '), text.search(' Powered by TCPDF'));
 
-    voca = text.match(/\d{1,2}.\s[A-Za-z]+/g);
+    voca = text.match(/\d{1,2}.\s[A-Za-z\s\-\_]+/g);
 
     aResult = text.match(/ⓐ[A-Za-z\s\-\_]*/g);
     bResult = text.match(/ⓑ[A-Za-z\s\-\_]*/g);
     cResult = text.match(/ⓒ[A-Za-z\s\-\_]*/g);
     dResult = text.match(/ⓓ[A-Za-z\s\-\_]*/g);
+
+    var tBody = document.querySelector('body > div.print-only > table > tbody');
+    var row,
+        cellVocaL1, cellOptionL2,
+        cellVocaR1, cellOptionR2,
+        maxLength = Math.ceil(voca.length/2) - 1,
+        i = 0,
+        j = maxLength + 1;
+
+    while(i < maxLength){
+        row = tBody.insertRow(tBody.rows.length); // 하단에 추가
+        
+        cellVocaL1 = row.insertCell(0);
+        cellVocaL2 = row.insertCell(1);
+        cellVocaL1.innerHTML = voca[i];
+        cellVocaL2.innerHTML = aResult[i] + '  ' +
+                               bResult[i] + '  ' +
+                               cResult[i] + '  ' +
+                               dResult[i];
+        
+        cellVocaR1 = row.insertCell(2);
+        cellVocaR2 = row.insertCell(3);
+        cellVocaR1.innerHTML = voca[j];
+        cellVocaR2.innerHTML = aResult[j] + '  ' +
+                               bResult[j] + '  ' +
+                               cResult[j] + '  ' +
+                               dResult[j];
+        
+        i += 1;
+        j += 1;
+    }
+
+    /*
+    1     30
+    28    57
+    29
+    */
+
+    if(voca.length%2 == 1){
+        var lastIdx = Math.floor(voca.length/2);
+
+        row = tBody.insertRow(tBody.rows.length); // 하단에 추가
+        
+        cellVocaL1 = row.insertCell(0);
+        cellVocaL2 = row.insertCell(1);
+        cellVocaL1.innerHTML = voca[lastIdx];
+        cellVocaL2.innerHTML = aResult[lastIdx] + '  ' +
+                               bResult[lastIdx] + '  ' +
+                               cResult[lastIdx] + '  ' +
+                               dResult[lastIdx];
+    }
 
     console.log(text);
     console.log(voca);
