@@ -13,7 +13,7 @@
   .no-print{ display: none !important; }
   
   h1{
-      margin: 0px;
+    margin: 0px 0px 2px 10px;
   }
 
   table#voca_tbl{
@@ -23,8 +23,8 @@
   }
 
   table#voca_tbl > tbody > tr > td {
-    padding: 1px 8px;
-    
+    padding: 1px 6px;
+
     border-top: 1px grey solid;
     border-bottom: 1px grey solid;
   }
@@ -59,7 +59,7 @@
 
 <body>
 
-    <h1>Hackers Voca Test</h1>
+    <h1>Creating Voca Test...</h1>
     <table id="voca_tbl">
         <tbody>
         </tbody>
@@ -78,7 +78,7 @@
   
   <div class="no-print">
     <!-- the PDF file must be on the same domain as this page -->
-    <iframe id="input" src="https://cors-anywhere.herokuapp.com/https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=2&day2=2&question=56&type=2&cate=1&answer=N"></iframe>
+    <iframe id="input" src="https://cors-anywhere.herokuapp.com/https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=10&day2=10&question=56&type=2&cate=1&answer=N"></iframe>
   </div>
     
   <script>
@@ -122,6 +122,7 @@
     dayNum = text.substring(3, 5);
 
     document.getElementsByTagName('h1')[0].innerText = 'Hackers Voca Test - Day.' + dayNum;
+    document.title = 'Hackers_Voca_Test_Day' + dayNum;
 
     text = text.substring(text.search('1. '), text.search(' Powered by TCPDF'));
     voca = text.match(/\d{1,2}.\s[A-Za-z\s\-\_]+/g);
@@ -162,15 +163,6 @@
         j += 1;
     }
 
-    /*
-    1     30
-    28    57
-    29
-
-    1     29
-    28    56
-    */
-
     if(voca.length%2 == 1){
         var lastIdx = Math.floor(voca.length/2);
 
@@ -185,12 +177,6 @@
                                dResult[lastIdx];
     }
 
-    console.log(text);
-    console.log(voca);
-    console.log(aResult);
-    console.log(bResult);
-    console.log(cResult);
-    console.log(dResult);
   }
   </script>
 </body>
