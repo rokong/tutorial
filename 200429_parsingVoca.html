@@ -11,19 +11,47 @@
   #processor { height: 70px; }
 
   .no-print{ display: none !important; }
-  /*
-  .print-only{ display: none; }
-  */
+  
+  h1{
+      margin: 0px;
+  }
+
+  table#voca_tbl{
+      font-size: 13px;
+      margin: auto;
+      border-collapse: collapse;
+  }
+
+  table#voca_tbl > tbody > tr > td {
+    padding: 1px 8px;
+    
+    border-top: 1px grey solid;
+    border-bottom: 1px grey solid;
+  }
+
+  table#voca_tbl > tbody > tr > td:nth-child(2n+1){
+    font-weight: bold;
+ }
+
+ table#voca_tbl > tbody > tr > td:nth-child(3){
+    border-left: 1px grey solid;
+ }
 
   @media print{
     /*
     .no-print{ display: none !important; }
     .print-only{ display: block; }
     */
+
+    body{
+        margin: 0px !important;
+    }
+
   }
 
   @page{
-      margin: 0px auto;
+      margin: 7mm;
+      size: 21cm 29.7cm landscape;
   }
 
   </style>
@@ -31,13 +59,12 @@
 
 <body>
 
-    <div class="print-only">
-        <h1>Hackers Voca Test</h1>
-        <table>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
+    <h1>Hackers Voca Test</h1>
+    <table id="voca_tbl">
+        <tbody>
+        </tbody>
+    </table>
+
 
     
 
@@ -51,8 +78,7 @@
   
   <div class="no-print">
     <!-- the PDF file must be on the same domain as this page -->
-    <iframe id="input" src="https://cors-anywhere.herokuapp.com/https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=1&day2=1&question=57&type=2&cate=1&answer=N"></iframe>
-    <iframe id="sample" src="https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=1&day2=1&question=57&type=2&cate=1&answer=N"></iframe>
+    <iframe id="input" src="https://cors-anywhere.herokuapp.com/https://www.gohackers.com/modules/contents/lang.korean/pages/voca_program/pdf_paper.php?m=contents&front=voca_program&mode=pdf&iframe=Y&day1=2&day2=2&question=56&type=2&cate=1&answer=N"></iframe>
   </div>
     
   <script>
@@ -84,14 +110,20 @@
   }, true);
 
   function parseData(text){
-    var voca = [],
+    var dayNum = '',
+        voca = [],
         aResult = [],
         bResult = [],
         cResult = [],
         dResult = [];
-    
-    text = text.substring(text.search('1. '), text.search(' Powered by TCPDF'));
 
+    console.log(text);
+
+    dayNum = text.substring(3, 5);
+
+    document.getElementsByTagName('h1')[0].innerText = 'Hackers Voca Test - Day.' + dayNum;
+
+    text = text.substring(text.search('1. '), text.search(' Powered by TCPDF'));
     voca = text.match(/\d{1,2}.\s[A-Za-z\s\-\_]+/g);
 
     aResult = text.match(/ⓐ[A-Za-z\s\-\_]*/g);
@@ -99,13 +131,13 @@
     cResult = text.match(/ⓒ[A-Za-z\s\-\_]*/g);
     dResult = text.match(/ⓓ[A-Za-z\s\-\_]*/g);
 
-    var tBody = document.querySelector('body > div.print-only > table > tbody');
+    var tBody = document.querySelector('table#voca_tbl > tbody');
     var row,
         cellVocaL1, cellOptionL2,
         cellVocaR1, cellOptionR2,
-        maxLength = Math.ceil(voca.length/2) - 1,
+        maxLength = Math.floor(voca.length/2),
         i = 0,
-        j = maxLength + 1;
+        j = (voca.length%2 == 0) ? maxLength : maxLength+1;
 
     while(i < maxLength){
         row = tBody.insertRow(tBody.rows.length); // 하단에 추가
@@ -134,6 +166,9 @@
     1     30
     28    57
     29
+
+    1     29
+    28    56
     */
 
     if(voca.length%2 == 1){
