@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DBR Pub Viewer</title>
+<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/board.css?v=200331">
+<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/base.css?v=190305">
+</head>
+<body>
+    <h2 id="loading">로딩중...</h2>
+<script type="text/javascript">
+var urlDefault = 'https://cors-anywhere.herokuapp.com/https://dbr.donga.com/magazine/mcontents/type/list/pub_number/';
+
+function ajaxFunction(url){
+    var request = new XMLHttpRequest(),
+        resp = "",
+        htmlEl = document.createElement("html");
+    request.open('GET', 'https://cors-anywhere.herokuapp.com/https://dbr.donga.com/magazine/mcontents/type/list/pub_number/', true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            resp = this.response;
+            resp = resp.replace(/="\//g, "=\"https://dbr.donga.com/");
+            htmlEl.innerHTML = resp;
+
+            document.getElementById("loading").setAttribute("style", "display: none;");
+            document.body.appendChild(htmlEl.querySelectorAll("div.view4")[0]);
+            document.body.appendChild(htmlEl.querySelectorAll("div.board-btn")[0]);
+        }else{
+            console.log("We reached our target server, but it returned an error");
+        }
+    };
+    request.onerror = function() {
+        console.log("There was a connection error of some sort");
+    };
+    request.send();
+}
+
+ajaxFunction(urlDefault);
+
+document.addEventListener("click", function(e) {
+    e.preventDefault();
+    
+    for (var target = e.target; target && target != this; target = target.parentNode) {
+        if (target.matches("div.board-btn > a")) {
+            var tHref = target.href;
+            ajaxFunction(urlDefault+tHref.substr(tHref.lastIndexOf("/")+1));
+            
+            break;
+        }
+    }
+}, false);
+</script>
+</body>
+</html>
