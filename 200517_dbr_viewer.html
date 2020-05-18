@@ -147,8 +147,8 @@ document.addEventListener("click", function(e) {
     for (var target = e.target; target && target != this; target = target.parentNode) {
         if (target.matches("div.board-btn > a")) {
             document.getElementById("loadingGraphic").setAttribute("style", "display: unset;");
-            document.querySelectorAll("div")[1].remove();
-            document.querySelectorAll("div")[1].remove();
+            document.querySelectorAll("div.view4")[0].remove();
+            document.querySelectorAll("div.board-btn")[0].remove();
 
             var tHref = target.href;
             ajaxFunction(urlDefault+tHref.substr(tHref.lastIndexOf("/")+1));
