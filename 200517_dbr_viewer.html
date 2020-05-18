@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DBR Pub Viewer</title>
+<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/board.css?v=200331">
+<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/base.css?v=190305">
+<style>
+.lds-roller {
+  display: block;
+  width: 80px;
+  height: 80px;
+  margin: auto;
+  margin-top: 40%;
+}
+.lds-roller div {
+  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  transform-origin: 40px 40px;
+}
+.lds-roller div:after {
+  content: " ";
+  display: block;
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #000;
+  margin: -4px 0 0 -4px;
+}
+.lds-roller div:nth-child(1) {
+  animation-delay: -0.036s;
+}
+.lds-roller div:nth-child(1):after {
+  top: 63px;
+  left: 63px;
+}
+.lds-roller div:nth-child(2) {
+  animation-delay: -0.072s;
+}
+.lds-roller div:nth-child(2):after {
+  top: 68px;
+  left: 56px;
+}
+.lds-roller div:nth-child(3) {
+  animation-delay: -0.108s;
+}
+.lds-roller div:nth-child(3):after {
+  top: 71px;
+  left: 48px;
+}
+.lds-roller div:nth-child(4) {
+  animation-delay: -0.144s;
+}
+.lds-roller div:nth-child(4):after {
+  top: 72px;
+  left: 40px;
+}
+.lds-roller div:nth-child(5) {
+  animation-delay: -0.18s;
+}
+.lds-roller div:nth-child(5):after {
+  top: 71px;
+  left: 32px;
+}
+.lds-roller div:nth-child(6) {
+  animation-delay: -0.216s;
+}
+.lds-roller div:nth-child(6):after {
+  top: 68px;
+  left: 24px;
+}
+.lds-roller div:nth-child(7) {
+  animation-delay: -0.252s;
+}
+.lds-roller div:nth-child(7):after {
+  top: 63px;
+  left: 17px;
+}
+.lds-roller div:nth-child(8) {
+  animation-delay: -0.288s;
+}
+.lds-roller div:nth-child(8):after {
+  top: 56px;
+  left: 12px;
+}
+@keyframes lds-roller {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.view4 .magazine_info .img {
+    border: 1px solid #eee;
+    width: 18em;
+    float: left;
+    margin-right: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.view4 .magazine_info {
+    overflow: hidden;
+    padding: 2em 0 2em 20em;
+    position: relative;
+    min-height: 14em;
+    border-bottom: 1px solid #ddd;
+}
+</style>
+</head>
+<body>
+    <div id="loadingGraphic" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+<script type="text/javascript">
+var urlDefault = 'https://cors-anywhere.herokuapp.com/https://dbr.donga.com/magazine/mcontents/type/list/pub_number/';
+
+function ajaxFunction(url){
+    var request = new XMLHttpRequest(),
+        resp = "",
+        htmlEl = document.createElement("html");
+    request.open('GET', url, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            resp = this.response;
+            resp = resp.replace(/="\//g, "=\"https://dbr.donga.com/");
+            htmlEl.innerHTML = resp;
+
+            document.getElementById("loadingGraphic").setAttribute("style", "display: none;");
+            document.body.appendChild(htmlEl.querySelectorAll("div.view4")[0]);
+            document.body.appendChild(htmlEl.querySelectorAll("div.board-btn")[0]);
+        }else{
+            console.log("We reached our target server, but it returned an error");
+        }
+    };
+    request.onerror = function() {
+        console.log("There was a connection error of some sort");
+    };
+    request.send();
+}
+
+ajaxFunction(urlDefault);
+
+document.addEventListener("click", function(e) {
+    e.preventDefault();
+    
+    for (var target = e.target; target && target != this; target = target.parentNode) {
+        if (target.matches("div.board-btn > a")) {
+            document.getElementById("loadingGraphic").setAttribute("style", "display: unset;");
+            document.querySelectorAll("div")[0].remove();
+            document.querySelectorAll("div")[0].remove();
+
+            var tHref = target.href;
+            ajaxFunction(urlDefault+tHref.substr(tHref.lastIndexOf("/")+1));
+            break;
+        }
+    }
+}, false);
+</script>
+</body>
+</html>
