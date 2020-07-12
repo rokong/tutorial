@@ -2,152 +2,172 @@
 <html>
 <head>
 <title>DBR Pub Viewer</title>
-<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/board.css?v=200331">
-<link rel="stylesheet" type="text/css" href="https://dbr.donga.com/css/new/base.css?v=190305">
 <style>
-.lds-roller {
-  display: block;
-  width: 80px;
-  height: 80px;
-  margin: auto;
-  margin-top: 40%;
-}
-.lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 40px 40px;
-}
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #000;
-  margin: -4px 0 0 -4px;
-}
-.lds-roller div:nth-child(1) {
-  animation-delay: -0.036s;
-}
-.lds-roller div:nth-child(1):after {
-  top: 63px;
-  left: 63px;
-}
-.lds-roller div:nth-child(2) {
-  animation-delay: -0.072s;
-}
-.lds-roller div:nth-child(2):after {
-  top: 68px;
-  left: 56px;
-}
-.lds-roller div:nth-child(3) {
-  animation-delay: -0.108s;
-}
-.lds-roller div:nth-child(3):after {
-  top: 71px;
-  left: 48px;
-}
-.lds-roller div:nth-child(4) {
-  animation-delay: -0.144s;
-}
-.lds-roller div:nth-child(4):after {
-  top: 72px;
-  left: 40px;
-}
-.lds-roller div:nth-child(5) {
-  animation-delay: -0.18s;
-}
-.lds-roller div:nth-child(5):after {
-  top: 71px;
-  left: 32px;
-}
-.lds-roller div:nth-child(6) {
-  animation-delay: -0.216s;
-}
-.lds-roller div:nth-child(6):after {
-  top: 68px;
-  left: 24px;
-}
-.lds-roller div:nth-child(7) {
-  animation-delay: -0.252s;
-}
-.lds-roller div:nth-child(7):after {
-  top: 63px;
-  left: 17px;
-}
-.lds-roller div:nth-child(8) {
-  animation-delay: -0.288s;
-}
-.lds-roller div:nth-child(8):after {
-  top: 56px;
-  left: 12px;
-}
-@keyframes lds-roller {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
+/* loadingGraphic */
+.lds-roller{display:block;width:80px;height:80px;margin:auto;margin-top:40%}.lds-roller div{animation:lds-roller 1.2s cubic-bezier(0.5,0,0.5,1) infinite;transform-origin:40px 40px}.lds-roller div:after{content:" ";display:block;position:absolute;width:7px;height:7px;border-radius:50%;background:#fff;margin:-4px 0 0 -4px}.lds-roller div:nth-child(1){animation-delay:-.036s}.lds-roller div:nth-child(1):after{top:63px;left:63px}.lds-roller div:nth-child(2){animation-delay:-.072s}.lds-roller div:nth-child(2):after{top:68px;left:56px}.lds-roller div:nth-child(3){animation-delay:-.108s}.lds-roller div:nth-child(3):after{top:71px;left:48px}.lds-roller div:nth-child(4){animation-delay:-.144s}.lds-roller div:nth-child(4):after{top:72px;left:40px}.lds-roller div:nth-child(5){animation-delay:-.18s}.lds-roller div:nth-child(5):after{top:71px;left:32px}.lds-roller div:nth-child(6){animation-delay:-.216s}.lds-roller div:nth-child(6):after{top:68px;left:24px}.lds-roller div:nth-child(7){animation-delay:-.252s}.lds-roller div:nth-child(7):after{top:63px;left:17px}.lds-roller div:nth-child(8){animation-delay:-.288s}.lds-roller div:nth-child(8):after{top:56px;left:12px}@keyframes lds-roller{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 
-.view4 .magazine_info .img {
-    border: 1px solid #eee;
-    width: 18em;
-    float: left;
-    margin-right: 30px;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.view4 .magazine_info {
-    overflow: hidden;
-    padding: 2em 0 2em 20em;
-    position: relative;
-    min-height: 14em;
-    border-bottom: 1px solid #ddd;
-}
-
-.board-btn {
+body{
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
     text-align: left;
-    overflow: hidden;
-    padding-bottom: 1em;
-    padding-left: 0.5em;
+    color: #d9d9d9;
+    background-color: #1e1f21;
 }
-  
-.board-btn a {
-    display: inline-block;
-    text-align: center;
-    line-height: 1.4;
-    padding: 0.7em 1.5em;
+
+.magazine_info {
+    padding: 0px 40px;
+    padding-bottom: 20px;
+    border-bottom: 5px #6c757d solid;
+}
+
+.magazine_info > p{
+    margin: 0;
+}
+
+.magazine_info > p.img {
+    display: none;
+}
+
+.magazine_info > p.title {
+    font-size: 36px;
     font-weight: bold;
-    vertical-align: middle;
+}
+
+.magazine_info > p.con {
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.article_list {
+    border-bottom: 5px #6c757d solid;
+}
+
+.article_list > ul {
+    list-style-type: none;
+    margin-block-start: 1em;
+    margin-block-end: 2em;
+    margin-inline-start: 0;
+    margin-inline-end: 0;
+    padding-inline-start: 1em;
+    padding-inline-end: 1em;
+}
+
+.article_list > ul > li {
+    margin: 10px 0px;
+    line-height: 1.2;
+}
+
+.article_list > ul > li > a {
+    color: unset;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.article_list > ul > li > a > span.category {
+    font-size: 0.8rem;
+    color: #17a2b8;
+    padding-right: 0.2rem;
+    letter-spacing: -0.1rem;
+}
+
+.article_list > ul > li > a > span.name {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.board-btn{
+    padding: 1rem 0.5rem;
+}
+
+.board-btn > a {
+    text-align: center;
+    padding: 0.5rem 2rem;
+    font-weight: bold;
     box-sizing: border-box;
-    border: 1px solid #ccc;
-    font-size: 2em;
+    border: 1px solid #6c757d;
+    font-size: 1rem;
+    text-decoration: none;
+    color: unset;
+    margin: 0.5rem;
+}
+
+.board-btn > a:nth-child(1) {
+    margin-right: 0;
+}
+
+.board-btn > a:nth-child(2) {
+    display: none;
+}
+
+.img-wrapper {
+    width: 7rem;
+    height: 7rem;
+    background-color: #d9d9d9;
 }
 </style>
 </head>
 <body>
-    <div id="loadingGraphic" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div id="grid_loadingGraphic" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div id="grid_articleList"></div>
+    <div id="grid_article"></div>
 <script type="text/javascript">
-var urlDefault = 'https://cors-anywhere.herokuapp.com/https://dbr.donga.com/magazine/mcontents/type/list/pub_number/';
 
-function ajaxFunction(url){
+/* set eventListener when click another magazine */
+function setEventOnboardBtn(parent){
+    [].forEach.call(parent.querySelectorAll("div.board-btn > a"), function(btn){
+        btn.addEventListener("click", function(e){
+            e.preventDefault();
+
+            document.querySelectorAll("div.view4")[0].remove();
+            document.querySelectorAll("div.board-btn")[0].remove();
+
+            var tHref = btn.href;
+            loadArticlesInMagazine(tHref.substr(tHref.lastIndexOf("/")+1));
+        }, false);
+    });
+}
+
+/* set eventListener when click articles */
+function setEventOnArticle(parent){
+    [].forEach.call(parent.querySelectorAll("div.article_list > ul > li > a"), function(a){
+        a.addEventListener("click", function(e){
+            e.preventDefault();
+            loadArticle(a.getAttribute("href"));
+        }, false);
+    });
+}
+
+/* load article lists in magazine by its number */
+function loadArticlesInMagazine(MagazineNum){
+    //display loading icon
+    document.getElementById("grid_loadingGraphic").setAttribute("style", "display: block;");
+
     var request = new XMLHttpRequest(),
         resp = "",
-        htmlEl = document.createElement("html");
+        htmlEl = document.createElement("html"),
+        articleListEl = document.getElementById("grid_articleList"),
+        url = "https://cors-anywhere.herokuapp.com/"
+             + "https://dbr.donga.com/magazine/mcontents/type/list/pub_number/"
+             + MagazineNum;
+
     request.open('GET', url, true);
     request.onload = function() {
         if (this.status >= 200 && this.status < 400) {
             resp = this.response;
+            //console.log(resp);
             resp = resp.replace(/="\//g, "=\"https://dbr.donga.com/");
+            resp = resp.replace(/[sS][rR][cC]=["][^"]*"/g, "data-$&");
             htmlEl.innerHTML = resp;
 
-            document.getElementById("loadingGraphic").setAttribute("style", "display: none;");
-            document.body.appendChild(htmlEl.querySelectorAll("div.view4")[0]);
-            document.body.appendChild(htmlEl.querySelectorAll("div.board-btn")[0]);
+            document.getElementById("grid_loadingGraphic").setAttribute("style", "display: none;"); //hide loading icon
+            articleListEl.appendChild(htmlEl.querySelectorAll("div.view4")[0]); //ArticleList
+            articleListEl.appendChild(htmlEl.querySelectorAll("div.board-btn")[0]); //MagazinebuttonList
+
+            setEventOnboardBtn(articleListEl);
+            setEventOnArticle(articleListEl);
         }else{
             console.log("We reached our target server, but it returned an error");
         }
@@ -158,23 +178,47 @@ function ajaxFunction(url){
     request.send();
 }
 
-ajaxFunction(urlDefault);
+/* load article */
+function loadArticle(viewUrl){
+    //display loading icon
+    document.getElementById("grid_loadingGraphic").setAttribute("style", "display: block;");
+    //hide ArticleList
+    document.getElementById("grid_articleList").setAttribute("style", "display: none;");
 
-document.addEventListener("click", function(e) {
-    e.preventDefault();
-    
-    for (var target = e.target; target && target != this; target = target.parentNode) {
-        if (target.matches("div.board-btn > a")) {
-            document.getElementById("loadingGraphic").setAttribute("style", "display: block;");
-            document.querySelectorAll("div.view4")[0].remove();
-            document.querySelectorAll("div.board-btn")[0].remove();
+    var request = new XMLHttpRequest(),
+        resp = "",
+        htmlEl = document.createElement("html"),
+        articleEl = document.getElementById("grid_article"),
+        paramArr = viewUrl.match(/[0-9]+/g),
+        param1 = paramArr[0],
+        param2 = paramArr[1],
+        url = "https://cors-anywhere.herokuapp.com/"
+            + "https://dbr.donga.com/article/pop_print/"+param1+"/article_no/"+param2;
 
-            var tHref = target.href;
-            ajaxFunction(urlDefault+tHref.substr(tHref.lastIndexOf("/")+1));
-            break;
+    request.open('GET', url, true);
+    request.onload = function() {
+        if (this.status >= 200 && this.status < 400) {
+            resp = this.response;
+            //console.log(resp);
+            resp = resp.replace(/="\//g, "=\"https://dbr.donga.com/");
+            resp = resp.replace(/[sS][rR][cC]=["][^"]*"/g, "data-$&");
+            resp = resp.replace(/<img[^>]*>/g, "<div class='img-wrapper'>$&</div>");
+            htmlEl.innerHTML = resp;
+            
+            document.getElementById("grid_loadingGraphic").setAttribute("style", "display: none;"); //hide loading icon
+            articleEl.appendChild(htmlEl.querySelectorAll("div.top")[0]); //header
+            articleEl.appendChild(htmlEl.querySelectorAll("div.print-word")[0]); //article
+        }else{
+            console.log("We reached our target server, but it returned an error");
         }
-    }
-}, false);
+    };
+    request.onerror = function() {
+        console.log("There was a connection error of some sort");
+    };
+    request.send();
+}
+
+loadArticlesInMagazine("");
 </script>
 </body>
 </html>
