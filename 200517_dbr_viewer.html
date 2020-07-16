@@ -152,7 +152,7 @@ body{
 }
 
 #grid_articleNav > #back_btn {
-    font-size: 2rem;
+    font-size: 2.5rem;
     padding: 0.5rem;
     width: fit-content;
     cursor: pointer;
@@ -256,6 +256,22 @@ function setEventOnArticle(parent){
     });
 }
 
+/* set eventListener when click not loaded images */
+function setEventOnImageWrapper(parent){
+    [].forEach.call(parent.querySelectorAll("div.img-wrapper"), function(div){
+        div.addEventListener("click", function(e){
+            var imgEl = div.getElementsByTagName("img")[0];
+
+            e.preventDefault();
+            imgEl.setAttribute("src", imgEl.getAttribute("data-src"));
+
+            div.style.width = "100%";
+            div.style.height = "fit-content";
+            div.style.backgroundColor = "transparent";
+        }, false);
+    });
+}
+
 /* article -> articleList */
 document.querySelectorAll("#grid_articleNav > #back_btn")[0].addEventListener("click", function(e){
     fadeOut(document.getElementById("grid_article"));
@@ -336,8 +352,13 @@ function loadArticle(viewUrl){
             articleEl.appendChild(htmlEl.querySelectorAll("div.top")[0]); //header
             articleEl.appendChild(htmlEl.querySelectorAll("div.print-word")[0]); //article
 
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
             fadeOut(document.getElementById("grid_loadingGraphic"));
             fadeIn(document.getElementById("grid_article"));
+
+            setEventOnImageWrapper(articleEl);
         }else{
             console.log("We reached our target server, but it returned an error");
         }
