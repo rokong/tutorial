@@ -1,0 +1,58 @@
+명령어 정리
+
+<systemctl>
+현재 실행 중인 서비스를 볼 때
+$ systemctl --all
+
+code-server
+    현재 실행 중인 console을 볼 때
+    $ systemctl --user status code-server.service
+    
+    자동실행을 설정할 때
+    $ systemctl --user enable --now code-server
+    - --user : 현재 사용자의 서비스로 등록 (--user로 등록했으면 나머지도 다 붙여서 명령해야 함)
+    - enable : 자동실행 등록 (끄려면 disable)
+    - --now : 당장 지금 그 서비스를 실행한다
+    
+    실행에 실패한 UNIT을 볼 때
+    $ systemctl --user --failed
+    
+    재기동
+    $systemctl --user restart code-server.service
+    
+    종료할 때
+    $ systemctl --user stop code-server.service
+    
+    시작할 때
+    $ systemctl --user start code-server.service
+
+jdk
+    설치할 목록 보기
+    $ yum list java*
+    - jre(실행파일에 필요한 것)은 *.x86_64
+    - jdk(개발자한테 필요한 것)은 -devel.x86_64
+    - jdk 설치하면 알아서 jre도 설치가 된다
+    
+    설치하기
+    $ yum install java-1.8.0-openjdk-devel.x86_64
+    
+    잘 설치가 되었는지 확인
+    - 먼저 재기동
+    $ java -version
+    $ javac -version
+    
+    JAVA_HOME 설정
+    $ which javac
+    - javac이라는 명령어가 어디에서 불러오는지 확인
+    
+    $ readlink -f /usr/bin/javac
+    - 저 디렉토리는 어디를 가리키고 있는가?
+    
+    $ vi /etc/profile
+    - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.262.b10-0.el8_2.x86_64
+    
+    $ source /etc/profile
+    - 변경내용 적용
+    
+    $ echo $JAVA_HOME
+    - 
