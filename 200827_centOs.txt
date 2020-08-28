@@ -104,3 +104,38 @@ $ systemctl --all
         <name>install-test</name>
     
     - 지정 후 Y 입력
+
+    - Hello World가 있는 App으로 이동하고 F5로 run
+    - build failed해도 proceed (오류로그가 남아있어서 그냥 오류로 인식. 그냥 무시하자.)
+
+<tomcat>
+    mirror 사이트에서 설치
+    $ wget http://mirror.navercorp.com/apache/tomcat/tomcat-7/v7.0.105/bin/apache-tomcat-7.0.105.tar.gz
+    - 한 번 배워놓고 잘 쓰고있다
+
+    압축해제
+    $ tar -xvzf apache-tomcat-7.0.105.tar.gz
+
+    기존 tar 파일 삭제
+    $ rm apache-tomcat-7.0.105.tar.gz
+
+    디렉토리 이동
+    $ sudo mv ~/apache-tomcat-7.0.105/ /usr/share/tomcat
+    - 여기서는 /usr/share로 이동
+    - share 디렉토리는 어느 architecture에서도 사용가능한 것들
+
+    환경변수 설정
+    $ sudo vim /etc/profile
+        CATALINA_HOME=/usr/share/tomcat
+        PATH=$PATH:$CATALINA_HOME/bin
+        export CATALINA_HOME
+    $ source /etc/profile
+    $ echo $CATALINA_HOME
+    
+<spring in vscode>
+    - 왼쪽 explorer에서 우클릭 > Create maven project
+    - more 눌러서 find more archetype 찾기
+    - 적당한 것 하나 고르기
+
+    - 실행되는 첫 commend가 *mvn.cmd일 경우 Window 환경에 맞추어져서 그런 것임
+    - 실패한 명령어 따라서 *mvn.cmd를 *mvn으로 변경 후 실행
