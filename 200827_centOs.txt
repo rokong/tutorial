@@ -1,5 +1,16 @@
 명령어 정리
 
+<git>
+$ git config --global user.email "hongrr123@gmail.com"
+$ git config --global user.name "rokong"
+- 적당한 dir로 이동
+$ git init .
+$ git pull https://github.com/rokong/tutorial.git
+- 코드 작성
+$ git add *
+$ git commit -m "~~~"
+$ git push https://github.com/rokong/tutorial.git master
+
 <systemctl>
 현재 실행 중인 서비스를 볼 때
 $ systemctl --all
