@@ -50,7 +50,23 @@ $ systemctl --all
     
     시작할 때
     $ systemctl --user start code-server.service
-
+    
+    서버 시작 시 실행할 때
+    # systemctl enable code-server
+    - Failed to enable unit: Unit file code-server.service does not exist.
+    - code-server.service 파일이 없음
+    
+    # cd /usr/lib/systemd
+    # cp ./user/code-server.service ./system/code-server.service
+    - user가 아닌 system에 있어야 root에서 접근 가능
+    - 그런데 이렇게 되면 code-server도 root에서 실행
+    - 그래서 root -> code-server 실행보다, root -> hongrr123 실행이 더 안전함
+    
+    서버 시작 시 사용자 시작
+    # loginctl enable-linger hongrr123
+    # loginctl show-user hongrr123
+    - Linger=yes / Linger=no 확인
+    
 <jdk>
     설치할 목록 보기
     $ yum list java*
