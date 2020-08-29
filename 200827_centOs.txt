@@ -25,11 +25,26 @@
     $ git commit -m ""
     $ git push origin master
 
-<systemctl>
-현재 실행 중인 서비스를 볼 때
-$ systemctl --all
+<iptables>
+    iptalbes의 nat 규칙
+    $ sudo iptables -L -n -t nat
+    - (L)리스트 출력 / (n)이름말로 숫자로 / (t)특정 테이블 보기
 
-<code-server>
+    :80 redirect :8080 규칙추가
+    $ sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+    - (A)append / (i)입력 인터페이스 / (p)프로토콜 / (j)할 일
+
+    number 표시해서 목록보기
+    $ sudo iptables -t nat -L --line-numbers
+
+    특정 규칙 삭제하기
+    $ sudo iptables -t nat -D PREROUTING 1
+    - PREROUTING의 1번 규칙을 삭제
+
+<code-server by systemctl>
+    현재 실행 중인 서비스를 볼 때
+    $ systemctl --all
+
     현재 실행 중인 console을 볼 때
     $ systemctl --user status code-server.service
     
@@ -50,6 +65,10 @@ $ systemctl --all
     
     시작할 때
     $ systemctl --user start code-server.service
+
+    매번 user로 접속하여 시작하기 귀찮을 때
+    - /usr/lib/systemd/user/code-server.service
+    - 
 
 <jdk>
     설치할 목록 보기
@@ -172,10 +191,47 @@ $ systemctl --all
     $ source /etc/profile
     $ echo $CATALINA_HOME
     
+    manager 설정
+    $ $CATALINA_HOME/conf/tomcat-users.xml
+        <role rolename="manager"/>
+        <role rolename="manager-gui"/>
+        <role rolename="admin"/>
+        <user username="admin" password="root" roles="admin,manager,manager-gui"/>
+    - 추가 후 reload
+
+<servlet-jsp in vscoode>
+    - 왼쪽 explorer에서 우클릭 > Create maven project
+    - more 눌러서 find more archetype 찾기
+    - maven archetype webapp 설치
+
+    - pom.xml에서 수정
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
 <spring in vscode>
     - 왼쪽 explorer에서 우클릭 > Create maven project
     - more 눌러서 find more archetype 찾기
-    - 적당한 것 하나 고르기
+    - maven archetype webapp 설치
 
     - 실행되는 첫 commend가 *mvn.cmd일 경우 Window 환경에 맞추어져서 그런 것임
     - 실패한 명령어 따라서 *mvn.cmd를 *mvn으로 변경 후 실행
+
+    - pom.xml에서 수정
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+    maven standard directory layout
+    //출처 : https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html
+    - pom.xml           //설정파일
+    - src               //개발
+      - main
+        - java          //src
+        - resources     //lib
+        - webapp        //WebContent
+      - test
+        - java
+        - resources
+    - target            //결과물
+
+    spring framework
+    //출처 : https://docs.spring.io/spring/docs/4.3.28.RELEASE/spring-framework-reference/htmlsingle/
