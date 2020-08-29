@@ -30,8 +30,8 @@
     $ sudo iptables -L -n -t nat
     - (L)리스트 출력 / (n)이름말로 숫자로 / (t)특정 테이블 보기
 
-    :80 redirect :8080 규칙추가
-    $ sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+    :80 redirect :8081 규칙추가
+    $ sudo iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8081
     - (A)append / (i)입력 인터페이스 / (p)프로토콜 / (j)할 일
 
     number 표시해서 목록보기
@@ -211,6 +211,21 @@
         <user username="admin" password="root" roles="admin,manager,manager-gui"/>
     - 추가 후 reload
 
+    shell 실행 시 환경변수 자동설정
+    $ vim ~/.bashrc
+        source /etc/profile
+    - bash 실행 때마다 해당 명령어 자동실행
+
+<tomcat operation>
+    vscode extension이 불편해서 직접 배포하기로 함
+    - maven projects에서 clean 후 package
+    - cp target/*.war $CATALINA_HOME/webapps/
+    - $CATALINA_HOME/bin/startup.sh
+        - 이러면 알아서 war 파일 deploy (재배포 시에도 알아서 인식)
+    - tail -f -n 50 $CATALINA_HOME/logs/catalina.out
+        - 실시간 로그 확인 가능
+    - TODO : deploy shell 만들기
+
 <servlet-jsp in vscoode>
     - 왼쪽 explorer에서 우클릭 > Create maven project
     - more 눌러서 find more archetype 찾기
@@ -247,3 +262,26 @@
 
     spring framework
     //출처 : https://docs.spring.io/spring/docs/4.3.28.RELEASE/spring-framework-reference/htmlsingle/
+
+    - suggest short key : shift + space (현재 os에서는 언어 전환으로 인식)
+
+    - web.xml
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    - /*로 했더니 안되더라. /로 하자.
+
+    - java test runner : 0.24.0 으로 하니깐 잘 되더라.
+
+    - controller에서 class와 function 둘 다 request mapping 해주었음.
+
+    Publish 방법
+    - maven projects에서 Clean 후 Package
+    - target/package/*.war 우클릭 -> Run on tomcat server
+
+    vscode extension으로 tomcat 구동
+    - .local/share/code-server/User/workspaceStorage/ 내 extension별로 tomcat 생성
+    - $ cp -r $CATALINA_HOME/webapps/manager /home/hongrr123/.local/share/code-server/User/workspaceStorage/aa0f31a/adashen.vscode-tomcat/tomcat/tomcat/webapps/manager
+    - 위 명령어로 manager 화면 올릴 수 있음
+
