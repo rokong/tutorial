@@ -54,6 +54,9 @@
     - enable : 자동실행 등록 (끄려면 disable)
     - --now : 당장 지금 그 서비스를 실행한다
     
+    자동실행에 등록되었는지 확인
+    $ systemctl --user is-enabled code-server
+
     실행에 실패한 UNIT을 볼 때
     $ systemctl --user --failed
     
@@ -285,3 +288,59 @@
     - $ cp -r $CATALINA_HOME/webapps/manager /home/hongrr123/.local/share/code-server/User/workspaceStorage/aa0f31a/adashen.vscode-tomcat/tomcat/tomcat/webapps/manager
     - 위 명령어로 manager 화면 올릴 수 있음
 
+<pgadmin4-web in apache>
+    pgadmin4 repository 설치
+    $ sudo rpm -i https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-repo-1-1.noarch.rpm
+
+    pgadmin4 설치
+    $ sudo yum install pgadmin4-web
+
+    pgadmin4 repository 삭제
+    $ rm -f /etc/yum.repos.d/pgadmin4.repo
+    $ yum reposlit
+        - pgadmin이 사라졌는지 확인
+
+    pgadmin4 setup in apache
+    $ sudo /usr/pgadmin4/bin/setup-web.sh 
+    - 했더니 Apache 실행할 거냐고 물어봄 (갑작스러운데?)
+    - 그래서 apache(httpd)가 설치가 되었음.
+    - 80 port 접속 후 500 error
+    - /var/log/httpd/error_log 보니 /var/lib/pgadmin 에 권한이 없음
+        - 쭉 살펴보니깐 apache 소유로 pgadmin이 잡혀있음
+
+    권한변경
+    $ chown -R root:root /var/log/pgadmin/
+    $ chown -R root:root /var/lib/pgadmin/
+
+    다시 실행
+    $ mv /usr/pgadmin4 /usr/lib/pgadmin4
+    $ sudo /usr/pgadmin4/bin/setup-web.sh
+        - /usr/lib/pgadmin4/bin/setup-web.sh: line 41: /usr/pgadmin4/venv/bin/python3: No such file or directory
+        - 괜히 경로 바꿨네 제기랄
+
+    어쨌든 구글링 결과
+    $ chcon -R -t httpd_sys_content_rw_t "/var/log/pgadmin/"
+    $ chcon -R -t httpd_sys_content_rw_t "/var/lib/pgadmin/"
+    - 대충 찾아본 결과 보안설정의 충돌 -> 강제 지정
+
+<pgadmin>
+    SSL 파일 설정
+    - /var/lib/pgadmin/storage/hongrr123_gmail.com/로 .pem 파일 이동
+    - chown -R apache: .
+    - chmod 600 *.pem
+    
+    Create-Server
+    - General/name 지정
+    - Connection/HostAddress, Port, Username, Password 지정
+    - SSL/SSL-mode:Verify-CA, client-cert, client-key, server-ca 지정
+
+<apache>
+    $ sudo yum install httpd
+    $ sudo systemctl enable --now httpd
+
+200830 TODO LIST
+    - SSL 적용하기 (certified)
+        - 도메인을 먼저 등록해야 한다고 한다.
+        - 결재할 수 있는 카드가 없어서 실패
+    - Database 구축하기
+        - Cloud의 SQL 탭에서 Postgresql만 골랐더니 알아서 생성. (감동..)
