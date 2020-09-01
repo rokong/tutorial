@@ -221,12 +221,20 @@
 
 <tomcat operation>
     vscode extension이 불편해서 직접 배포하기로 함
-    - maven projects에서 clean 후 package
-    - cp target/*.war $CATALINA_HOME/webapps/
+
+    maven projects에서 clean 후 package
+
+    배포파일 복사
+    - $ cp target/*.war $CATALINA_HOME/webapps/
+
+    tomcat 시작
     - $CATALINA_HOME/bin/startup.sh
-        - 이러면 알아서 war 파일 deploy (재배포 시에도 알아서 인식)
+    - 이러면 알아서 war 파일 deploy (재배포 시에도 알아서 인식)
+
+    tomcat 로그보기
     - tail -f -n 50 $CATALINA_HOME/logs/catalina.out
         - 실시간 로그 확인 가능
+    
     - TODO : deploy shell 만들기
 
 <servlet-jsp in vscoode>
@@ -323,6 +331,17 @@
     $ chcon -R -t httpd_sys_content_rw_t "/var/lib/pgadmin/"
     - 대충 찾아본 결과 보안설정의 충돌 -> 강제 지정
 
+    SELinux 다시 설정
+    $ yum install policycoreutils-python-utils
+        - semanage하려고 설치
+        
+        setsebool -P httpd_can_network_connect 1 1> /dev/null
+        setsebool -P httpd_can_network_connect_db 1 1> /dev/null
+        semanage fcontext -a -t httpd_var_lib_t '/var/lib/pgadmin(/.*)?' 1> /dev/null
+        restorecon -R -v /var/lib/pgadmin 1> /dev/null
+        semanage fcontext -a -t httpd_log_t '/var/log/pgadmin(/.*)?' 1> /dev/null
+        restorecon -R -v /var/log/pgadmin 1> /dev/null
+
 <pgadmin>
     SSL 파일 설정
     - /var/lib/pgadmin/storage/hongrr123_gmail.com/로 .pem 파일 이동
@@ -338,9 +357,84 @@
     $ sudo yum install httpd
     $ sudo systemctl enable --now httpd
 
+<apache-connectors>
+    $ wget http://apache.mirror.cdnetworks.com/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.48-src.tar.gz
+    $ tar -xvzf tomcat-connectors-1.2.48-src.tar.gz
+    $ rm tomcat-connectors-1.2.48-src.tar.gz
+
+    src만 있으면 되나 했는데 별도 package들도 설치해야 한다고 한다.
+        - $ sudo yum install gcc gcc-c++ make httpd-devel
+
+    src compile
+    $ cd tomcat-connectors-1.2.48-src/native
+    $ ./configure --with-apxs=/usr/bin/apxs
+        - which apxs로 httpd-devel 디렉토리 찾아야 함
+    
+    $ make
+        - 했는데 "redhat-hardened-cc1: No such file or directory" 나온다.
+        - centos 환경에서 build환경을 맞추기 위한 또 다른 절차가 필요하다.
+        - $ sudo yum install redhat-rpm-config
+    $ sudo make install
+        - sudo로 해야 permission denied 없이 설치가 된다
+    
+    $ chcon -u system_u -r object_r -t httpd_modules_t /etc/httpd/modules/mod_jk.so
+        - SELinux를 넘어서기 위함
+    
+    Apache에서 Tomcat 모듈을 인식하는 과정
+    -방법1
+    $ sudo vim /etc/httpd/conf/httpd.conf
+        LoadModule jk_module modules/mod_jk.so
+        - LoadModule 또는 Include 아래에다가 추가
+    
+    -방법2
+    $ sudo vim /etc/httpd/conf.modules.d/00-jk.conf
+        LoadModule jk_module modules/mod_jk.so
+        - cent OS 에서는 모듈별로 *.conf 파일을 정리해두었다.
+        - conf/httpd.conf 에서 Include로 불러들이는 방식
+    
+    jk관련 설정
+    $ sudo /etc/vim/httpd/conf.d/mod_jk.conf
+        <IfModule jk_module>
+            JkWorkersFile conf.d/workers_jk.properties
+            JkLogFile logs/mod_jk.log
+            JkLogLevel info
+            JkShmFile run/mod_jk.shm
+            JkMountFile conf.d/uriworkermap.properties
+        </IfModule>
+        - /etc/httpd/ 아래에 conf, conf.d, conf.mod.d 3개가 있다.
+        - conf : httpd.conf (숙주, 아래 나머지들을 호출한다)
+        - conf.mod.d : module에 대한 *.conf들
+        - conf.d : 가장 마지막에 불려지는 옵션같은 설정들
+
+    workers 관련 설정 (mod_jk.conf에서 정의한 파일들)
+    $ cd /etc/vim/httpd/conf.d/
+    $ sudo touch workers_jk.properties uriworkermap.properties
+    
+    $ sudo vim workers_jk.properties
+        worker.list=tomcat1
+        worker.tomcat1.port=8009 
+        worker.tomcat1.host=localhost 
+        worker.tomcat1.type=ajp13 
+        worker.tomcat1.lbfactor=1
+        - 여러 인스턴스를 만들 수 있다.
+
+    $ sudo vim uriworkermap.properties
+        /*.jsp=tomcat1
+        - request 별로 인스턴스를 지정할 수 있다.
+    
+    tomcat에서 apache 요청받을 준비
+    $ vim /usr/share/tomcat/conf/server.xml
+        - 기존 http 포트 막기
+        - 8009 열기 + URIEncoding
+
+    tomcat & apache 구동
+    $ chown apache: /run/httpd
+    $ chmod -R 
+
 200830 TODO LIST
     - SSL 적용하기 (certified)
         - 도메인을 먼저 등록해야 한다고 한다.
         - 결재할 수 있는 카드가 없어서 실패
     - Database 구축하기
         - Cloud의 SQL 탭에서 Postgresql만 골랐더니 알아서 생성. (감동..)
+        - postgresql - mybatis - spring 연동
