@@ -548,9 +548,45 @@
 
     database 비밀번호는 code-server 비밀번호와 같다
 
+<nginx>
+    repository 설정
+    $ vim /etc/yum.repos.d/nginx.repo
+        name=nginx repo
+        baseurl=https://nginx.org/packages/centos/7/$basearch/
+        gpgcheck=0
+        enabled=1
+        - baseurl의 7은 version을 의미
+    
+    configuration
+    $ sudo vim /etc/nginx/nginx.conf
 
-200905 : TODOLIST
-    - 리버스 프록시(?)를 알아보자
+    container 생성
+        - pgadmin4를 127.0.0.1:5050 으로 publish
+    
+    nginx.conf 설정
+    $ sudo vim /etc/nginx/conf.d/pgadmin4.conf
+        server {
+            listen 10.178.0.5:80;           -> listening
+            server_name 34.64.187.123;      -> (request path, domain available)
+
+            location /pgadmin4/ {
+                proxy_set_header X-Script-Name /pgadmin4;   -> pgadmin4 아래 dir로 넣을 때 추가
+                proxy_set_header Host $host;                -> pgadmin4 아래 dir로 넣을 때 추가
+                proxy_pass http://127.0.0.1:5050/;
+                proxy_redirect off;
+            }
+        }
+
+    SELinux 설정
+    $ sudo setsebool -P httpd_can_network_connect 1
+
+    nginx 재기동
+    $ systemctl restart nginx
+
+    code-server 추가사항
+        proxy_set_header Upgrade       $http_upgrade;
+        proxy_set_header Connection    "Upgrade";
+        - web socket 설정을 위함
 
 <docker ref>
     도커 이미지 원리
