@@ -65,7 +65,7 @@
     $ sudo docker run                   -> image(local or remote)를 container로 실행하는 것
     > -d                                -> detached : console 출력 없이 실행
     > --name=code-server                -> container 이름
-    > -p 10.178.0.5:8090:8080           -> publish
+    > -p 127.0.0.1:8081:8080            -> publish
     > -v cdr-vol:/home/coder/project    -> volume wiring
     > -u "$(id -u):$(id -g)"            -> user
     > codercom/code-server:latest       -> image
@@ -109,9 +109,158 @@
 
 <java in docker>
 
+    Executable jar 만들기
+    $ vim pom.xml
+        <properties>
+            <deploy.target.dir>target</deploy.target.dir>
+            <lib.dir>lib</lib.dir>
+            <jar.name>hello-docker-java</jar.name>
+        </properties>
+        
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <finalName>${jar.name}</finalName>
+                        <outputDirectory>${deploy.target.dir}</outputDirectory><!-- jar 파일이 생성될 폴더 -->
+                        <archive>
+                            <manifest>
+                                <mainClass>App</mainClass><!-- public static void main() 함수가 있는 클래스 지정 -->
+                                <addClasspath>true</addClasspath><!-- jar 파일 META-INF/MANIFEST.MF 에 클래스패스 정보 추가 -->
+                                <classpathPrefix>${lib.dir}/</classpathPrefix><!-- classpath 추가시 prefix 설정-->
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.3</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <outputDirectory>${deploy.target.dir}/${lib.dir}</outputDirectory>
+                        <overWriteIfNewer>true</overWriteIfNewer>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </build>
+        - 위의 plugin과 configuration을 적용하면 MANIFEST-INF 수정이 필요가 없다.
+        - 바로 실행가능한 jar 파일이 만들어진다.
+
+    Docker build 준비
+    $ mkdir ~/hello-docker-java
+    $ cd hello-docker-java
+
+    Dockerfile 생성
+    $ vim Dockerfile
+        FROM openjdk:8-jdk-alpine                           -> 경량화된(alpine) openjdk에서 시작
+        RUN addgroup -S java && adduser -S java -G java     -> java라는 사용자와 그룹을 만든다
+        USER java:java                                      -> root가 아닌 java:java로 사용자 변경
+        ARG JAR_FILE=target/*.jar                           -> variable 만듦
+        COPY ${JAR_FILE} app.jar                            -> ${JAR_FILE}을 container로 복사
+        ENTRYPOINT ["java","-jar","/app.jar"]               -> 실행 시 수행할 명령어, parameter
+
+    image 만들기
+    $ sudo docker build \
+    > --build-arg JAR_FILE=hello-docker-java.jar \          -> parameter를 override 할 수 있다
+    > -t rokong/hello-docker-java:0.0.1 \                   -> image의 이름과 tag를 지정
+    > .                                                     -> Dockerfile이 있는 directory
+
+    Container 만들기
+    $ sudo docker run \
+    > -i \                                                  -> STDIN을 사용한다
+    > --name=hello-d-c \                                    -> container의 이름을 지정
+    > rokong/hello-docker-java:0.0.1                        -> run할 image
+        - Hello World! 가 출력되면 성공!
+    
+<vscode with docker>
+//출처 : https://code.visualstudio.com/docs/remote/containers
+//출처 : https://medium.com/@ssowonny/vs-code%EB%A1%9C-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EC%95%88%EC%97%90%EC%84%9C-%EA%B0%9C%EB%B0%9C%ED%95%98%EA%B8%B0-d8ed0950d69a
+- with Visual Studio Code Remote - Containers extension
+
+    Prerequisite : jdk8 환경 만들기
+    $ vim Dockerfile
+        FROM openjdk:8-jdk-alpine
+        RUN addgroup -S java && adduser -S java -G java
+        USER java:java
+        - 간단한 openjdk-8만 가져온다
+    
+    $ sudo docker build -t rokong/hello-docker-java:0.0.2 .
+
+    $ sudo docker run -d -it --name=java-8 rokong/hello-docker-java:0.0.2
+        //출처 : https://www.popit.kr/%EA%B0%9C%EB%B0%9C%EC%9E%90%EA%B0%80-%EC%B2%98%EC%9D%8C-docker-%EC%A0%91%ED%95%A0%EB%95%8C-%EC%98%A4%EB%8A%94-%EB%A9%98%EB%B6%95-%EB%AA%87%EA%B0%80%EC%A7%80/
+        - docker는 shell이 종료되면 process도 함께 종료된다.
+        - 그래서 entrypoint가 따로 없다면 -d를 할 때도 -it를 함께 해주어야 한다.
+    
+    정상적으로 실행되는지 확인
+    $ sudo docker exec -it java-8 java -version
+
+    attach container
+    $ sudo docker attach java-8
+
+    detach container (without stop container)
+    / $ ctrl+P, ctrl+Q
+
+- code-server에서는 Remote - Containers Extension을 사용하지 못한다
+- 전략을 수정해야 겠다
+
+<cdr-java in docker>
+- code-server 위에 jdk를 설치하여 보자
+
+    $ mkdir ~/cdr-java
+
+    $ touch ~/cdr-java/config.yaml
+        - code-server 설정파일 작성
+    
+    Dockerfile
+    $ vim ~/cdr-java/Dockerfile
+        FROM codercom/code-server:latest
+        RUN mkdir -p /home/coder/.local/share/code-server \
+            && chown coder /home/coder/.local/share/code-server
+        VOLUME /home/coder/.local/share/code-server
+
+        COPY config.yaml /home/coder/.config/code-server/config.yaml
+
+    image
+    $ sudo docker build -t rokong/cdr-java:0.0.1 .
+
+    container
+    $ sudo docker run -d --name code-server -p 127.0.0.1:8081:8080 rokong/cdr-java:0.0.3
+        - 여기까지 cdr에 고정된 config를 사용할 수 있게 되었다
+    
+    jdk를 올려보자
+
+    $ vim ~/cdr-java/Dockerfile
+        # jdk8
+        FROM openjdk:8-jdk-alpine AS JDK_IMG
+        RUN rm -rf /etc/passwd \
+            && rm -rf /etc/shadow \
+            && rm -rf /etc/group
+
+        # code server
+        FROM codercom/code-server:latest
+        COPY --from=JDK_IMG / /
+        - 먼저 jdk를 base로 하고
+        - code-server에 덮어쓰기되면 안 되는 파일들을 제거
+        - 새로운 이미지 가져옴 (multi stage)
+        - 기존 이미지에서 그대로 copy
+        - 이후 설정은 같다
+    
+    
 
 200907 TODO list
-- java project docker에서 돌리기
+
 
 <docker ref>
     도커 이미지 원리
