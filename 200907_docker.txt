@@ -240,7 +240,6 @@
         - 여기까지 cdr에 고정된 config를 사용할 수 있게 되었다
     
     jdk를 올려보자
-
     $ vim ~/cdr-java/Dockerfile
         # jdk8
         FROM openjdk:8-jdk-alpine AS JDK_IMG
@@ -257,10 +256,57 @@
         - 기존 이미지에서 그대로 copy
         - 이후 설정은 같다
     
-    
+    maven을 올려보자
+    //출처 : docker-maven/openjdk-8-slim/Dockerfile
+    $ vim ~/cdr-java/Dockerfile
+        ARG MAVEN_VERSION=3.6.3
+        ARG SHA=c35a1803a6e70a126e80b2b3ae33eed961f83ed74d18fcd16909b2d44d7dada3203f1ffe726c17ef8dcca2dcaa9fca676987befeadc9b9f759967a8cb77181c0
+        ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
+
+        RUN sudo mkdir -p /usr/share/maven /usr/share/maven/ref \
+        && sudo curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+        && sudo echo "${SHA}  /tmp/apache-maven.tar.gz" | sha512sum -c - \
+        && sudo tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
+        && sudo rm -f /tmp/apache-maven.tar.gz \
+        && sudo ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+
+        ENV MAVEN_HOME /usr/share/maven
+        ENV MAVEN_CONFIG "$CODER_HOME/.m2"
+
+        COPY maven-settings.xml /usr/share/maven/ref/
+
+    code-server standalone 설치
+    ARG STANDALONE_INSTALL_PREFIX=/usr
+    ARG CACHE_DIR=/tmp
+    ARG VERSION=3.5.0
+    ARG OS=linux
+    ARG ARCH=amd64
+
+RUN cd /tmp/ \
+    && curl -LJO https://github.com/cdr/code-server/releases/download/v3.5.0/code-server_3.5.0_amd64.deb \
+    && cd / \
+    && mkdir -p "$STANDALONE_INSTALL_PREFIX/lib" "$STANDALONE_INSTALL_PREFIX/bin" \
+    && tar -C "$STANDALONE_INSTALL_PREFIX/lib" -xzf "$CACHE_DIR/code-server-$VERSION-$OS-$ARCH.tar.gz" \
+    && mv -f "$STANDALONE_INSTALL_PREFIX/lib/code-server-$VERSION-$OS-$ARCH" "$STANDALONE_INSTALL_PREFIX/lib/code-server-$VERSION" \
+    && ln -fs "$STANDALONE_INSTALL_PREFIX/lib/code-server-$VERSION/bin/code-server" "$STANDALONE_INSTALL_PREFIX/bin/code-server"
+
+cd /tmp/ \
+    && curl -LJO "https://github.com/cdr/code-server/releases/download/v3.5.0/code-server-3.5.0-linux-amd64.tar.gz" \
+    && cd / \
+    && mkdir -p "/usr/lib" "/usr/bin" \
+    && tar -C "/usr/lib" -xzf "/tmp/code-server-3.5.0-linux-amd64.tar.gz" \
+    && mv -f "/usr/lib/code-server-3.5.0-linux-amd64" "/usr/lib/code-server-3.5.0" \
+    && ln -fs "/usr/lib/code-server-3.5.0/bin/code-server" "/usr/bin/code-server"
+
+- TODO : node 설치를 위한 alpine 따로 알아보기
+
+200908 TODO list
+- code-server standalone 설치
 
 200907 TODO list
-
+- vscode extension 가져오기
+- vscode configuration 파일 가져오기
+- bind mount로 소스코드 container 밖으로 빼기
 
 <docker ref>
     도커 이미지 원리
