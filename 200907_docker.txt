@@ -300,6 +300,9 @@ cd /tmp/ \
 
 - TODO : node 설치를 위한 alpine 따로 알아보기
 
+200909 TODO list
+- tmux를 활용하여보자
+
 200908 TODO list
 - code-server standalone 설치
 

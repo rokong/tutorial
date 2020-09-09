@@ -478,3 +478,27 @@
         proxy_set_header Upgrade       $http_upgrade;
         proxy_set_header Connection    "Upgrade";
         - web socket 설정을 위함
+
+<tmux>
+- docker를 하면서 여러 컨테이너를 동시에 띄우고 싶을 때가 있다.
+- tmux 구조 : session > window > pane
+
+    session 생성 및 삭제
+    - 현재 생성되어 있는 session 보기 : $ tmux ls
+    - 생성 : $ tmux
+    - host로 나가기 : ctrl + B, D (detach)
+    - 다시 session 붙기 : $ tmux attach-session -t <num>
+    - session kill : $ tmux kill-session -t <num>
+    * session rename : ctrl + B, $
+
+    window 생성 및 삭제
+    - window 생성 : ctrl + B, C
+    - window 이동 : ctrl + B, <num>
+    - window 닫기 : ctrl + D
+
+    pane 관리
+    - pane 세로로 분리 : ctrl + B, %
+    - pane 가로로 분리 : ctrl + B, "
+    - pane 활성화 이동 : ctrl + B, 화살표
+    - pane 위치 이동 : ctrl + B, <{|}>
+    - pane 방향 바꾸기 : ctrl + B, space
