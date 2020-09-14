@@ -493,6 +493,7 @@
 
     window 생성 및 삭제
     - window 생성 : ctrl + B, C
+    - window 이름변경 : ctrl + B, (,)
     - window 이동 : ctrl + B, <num>
     - window 닫기 : ctrl + D
 
@@ -502,3 +503,4 @@
     - pane 활성화 이동 : ctrl + B, 화살표
     - pane 위치 이동 : ctrl + B, <{|}>
     - pane 방향 바꾸기 : ctrl + B, space
+

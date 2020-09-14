@@ -298,7 +298,80 @@ cd /tmp/ \
     && mv -f "/usr/lib/code-server-3.5.0-linux-amd64" "/usr/lib/code-server-3.5.0" \
     && ln -fs "/usr/lib/code-server-3.5.0/bin/code-server" "/usr/bin/code-server"
 
-- TODO : node 설치를 위한 alpine 따로 알아보기
+<docker-compose>
+    설치
+    $ sudo curl -L "https://github.com/docker/compose/releases/download/1.27.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    $ sudo chmod +x /usr/local/bin/docker-compose
+    $ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+    $ sudo docker-compose --version
+        - 뭐야 끝났네?
+
+    폴더생성
+    $ mkdir ~/cdr-dood
+    $ cd ~/cdr-dood
+    $ vim Dockerfile
+        FROM codercom/code-server:latest
+        COPY config.yaml /home/coder/.config/code-server/config.yaml
+        - 일단 Dockerfile을 만들어둔다
+    
+    docker-compose.yml 작성
+    $ vim docker-compose.yml
+        version: "3"
+        services:                           // containers가 아닌 services라고 부른다
+            cdr:                            // 마음대로 정한다. 향후 서비스 이름이 된다
+                build:                      
+                    context: .                  // docker build 할 directory
+                    dockerfile: ./Dockerfile    // docker build 할 Dockerfile
+                ports:
+                    - 127.0.0.1:8081:8080       // -p 할 때 쓸거
+
+    실행
+    $ sudo docker-compose up -d
+        - create and start containers
+    $ sudo docker-compose ps
+        - Service 이름이 나오고 State가 UP 이면 성공
+    
+    정지
+    $ sudo docker-compose down
+
+<dood>
+    $ vim Dockerfile
+        ARG DOCKERVERSION=19.03.12
+        RUN sudo curl -fsSLO https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKERVERSION}.tgz \
+        && sudo tar xzvf docker-${DOCKERVERSION}.tgz --strip 1 -C /usr/bin docker/docker \
+        && sudo rm docker-${DOCKERVERSION}.tgz
+        - binary file들 중에서 docker만 뺀다
+    
+
+200913 TODO list
+CI 전략을 짜보자
+//출처 : https://developers.redhat.com/blog/2013/11/08/ci-strategies-1of3/
+
+docker-compose를 채택하자(parameter 입력하기가 귀찮다)
+
+DooD를 만들어보자
+//출처 : https://aidanbae.github.io/code/docker/docker-overview/
+
+200912 TODO list
+- development를 위한 환경구축 전략을 생각해보자
+//이미 여러 사람들이 고민을 하였다
+//출처 : https://stackoverflow.com/questions/46724661/using-an-ide-while-developing-on-a-docker-container
+
+- 여러 글들을 읽다보니 지금 Docker를 활용한 CI환경 구축이라는 느낌을 받았다
+//https://itnext.io/docker-in-docker-521958d34efd
+
+
+// 목표 : cloud 개발환경 구축 (언제, 어디서든)
+    - Language : java
+        - jdk8을 IDE에서 접근 가능해야 함
+    - IDE
+        - code-server
+            - client : chrome에 접속할 수 있으면 가능
+            - server : ?
+        - vscode
+            - 
+        - eclipse
+    - Source Code : gitHub
 
 200909 TODO list
 - tmux를 활용하여보자
