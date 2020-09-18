@@ -361,13 +361,55 @@ cd /tmp/ \
         - Container (ex. Docker)
     - 고민의 결론 : GitLab이 좋아 보이는데, 아는게 Docker니깐 Docker로 접근하자.
 
+    cdr - tomcat 실시간 배포를 위한 설정
+    - maven에서 war package 생성위치를 맞춘다.
+
+    $ vim spring-dood/pom.xml
+        <maven.war.directory>${env.HOME}/webapps</maven.war.directory>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.2</version>
+          <configuration>
+            <outputDirectory>${maven.war.directory}</outputDirectory>
+          </configuration>
+        </plugin>
+        - $HOME/webapps 에 war 생성
+
     $ vim spring-Dockerfile
-        - maven build
-        - tomcat start
+        # tomcat
+        FROM tomcat:7.0.105-jdk8-openjdk-slim-buster
+        ARG APP_NAME=spring-dood
+        COPY --from=MVN /root/webapps/$APP_NAME*.war $CATALINA_HOME/webapps/$APP_NAME.war
+        RUN chmod 646 -R $CATALINA_HOME/webapps/$APP_NAME.war
+        - spring 이미지에서도 webapps 아래로 target 잡는다
+        - cdr에서의 배포를 위해 646으로 바꾼다
+
+    $ vim docker-compose
+        # tomcat deploy (wired with tomcat)
+          - webapps:/home/coder/webapps
+
+        # tomcat deploy (wired with cdr)
+          - webapps:/usr/local/tomcat/webapps
+
+        volumes:
+          webapps:
+        - docker-compose에 독립적인 volume을 두고
+          이를 각각 cdr과 was에 연결한다 (그럼 알아서 공유하겠지)
+
+    maven local repository를 위한 설정
+    - 최초 image build할 때와 cdr에서의 build할 때 시간을 많이 잡아 먹는다
+    $ vim cdr-Dockerfile
+        RUN mkdir -p /home/coder/.m2/repository \
+        && chown -R coder:coder /home/coder/.m2
     
+    $ vim docker-compose
+    cdr:
+      volumes:
+        # maven repository
+        - $HOME/.m2/repository:/home/coder/.m2/repository
+
 200914 TODO list
-    - maven repository cdr-dood와 spring-dood와 binding (docker-compose)
-    - cdr-dood의 war를 spring-dood의 war로 binding (docker-compose)
+    - cdr remote configuration & cdr extension 저장
 
 200913 TODO list
 CI 전략을 짜보자
