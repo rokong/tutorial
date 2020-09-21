@@ -408,6 +408,39 @@ cd /tmp/ \
         # maven repository
         - $HOME/.m2/repository:/home/coder/.m2/repository
 
+    tomcat in docker debugging
+    $ vim spring-Dockerfile
+        environment:
+            JPDA_ADDRESS: "8000"
+            JPDA_TRANSPORT: "dt_socket"
+        command:
+            ["catalina.sh", "jpda", "run"]
+        - jpda 통해 debugging 가능 (port address는 마음대로 설정)
+
+    docker remote debugging
+    - docker-compose로 구동 시 컨테이너들은 같은 bridge 에 묶이게 된다.
+    - 즉 그 안에서 컨테이너끼리 연결할 수 있다는 것.
+
+    docker network 확인방법
+    $ docker network ls
+        - 여기서 docker compose 프로젝트 ID 확인
+    $ docker network inspect <ID>
+        - Containers 아래 이름과 함께있는 IPv4Address 확인
+        - 그 주소로 다른 컨테이너에서 접근 가능
+        - 즉 Expose 없이도 Container 끼리 Communication 가능
+
+    vscode remote debugging 설정
+    - Debugger > Settings 누르면 launch.json 나옴
+    - configuration에 hostname과 port 수정 후 추가
+        {
+            "type": "java",
+            "name": "Debug (Attach) - Remote",
+            "request": "attach",
+            "hostName": "172.20.0.3",
+            "port": 8000
+        }
+    
+
 200914 TODO list
     - cdr remote configuration & cdr extension 저장
 
