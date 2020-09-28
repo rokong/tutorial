@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="shortcut icon" href="https://dbr.donga.com//images/common/favicon_16.ico" />
+<link rel="apple-touch-icon-precomposed" href="https://dbr.donga.com//images/common/favicon_96.png" />
 <title>DBR Pub Viewer</title>
 <style>
 /* loadingGraphic */
@@ -17,7 +19,7 @@
 
 body{
     margin: 0;
-    font-size: 1rem;
+    font-size: 2vw;
     font-weight: 400;
     line-height: 1.5;
     text-align: left;
@@ -40,7 +42,7 @@ body{
 }
 
 .magazine_info > p.title {
-    font-size: 36px;
+    font-size: 32px;
     font-weight: bold;
 }
 
@@ -60,8 +62,8 @@ body{
     margin-block-end: 2em;
     margin-inline-start: 0;
     margin-inline-end: 0;
-    padding-inline-start: 1em;
-    padding-inline-end: 1em;
+    padding-inline-start: 2em;
+    padding-inline-end: 2em;
 }
 
 .article_list > ul > li {
@@ -76,7 +78,7 @@ body{
 }
 
 .article_list > ul > li > a > span.category {
-    font-size: 0.8rem;
+    font-size: 12px;
     color: #17a2b8;
     padding-right: 0.2rem;
     letter-spacing: -0.1rem;
@@ -84,11 +86,11 @@ body{
 
 .article_list > ul > li > a > span.name {
     color: #6c757d;
-    font-size: 0.8rem;
+    font-size: 12px;
 }
 
-.board-btn{
-    padding: 1rem 0.5rem;
+.board-btn {
+    padding: 1.5rem 1rem 2rem 1rem;
 }
 
 .board-btn > a {
@@ -133,11 +135,11 @@ body{
 }
 
 #grid_article > div.top > h4.title {
-    font-size: 2rem;
+    font-size: 5vw;
 }
 
 #grid_article > div.top > p.publish-ho {
-    font-size: 0.8rem;
+    font-size: 1.5vw;
 }
 
 #grid_articleNav{
@@ -152,8 +154,8 @@ body{
 }
 
 #grid_articleNav > #back_btn {
-    font-size: 2.5rem;
-    padding: 0.5rem;
+    font-size: 2.5vw;
+    padding: 1vh;
     width: fit-content;
     cursor: pointer;
 }
@@ -179,13 +181,16 @@ body{
     <div id="grid_articleList"></div>
     <div id="grid_article">
         <div id="grid_articleNav">
-            <div id="back_btn">목록</div>
+            <div id="back_btn">&#9776;&#9776;</div>
             <div id="progress">
                 <span id="ing"></span>
             </div>
         </div>
     </div>
 <script type="text/javascript">
+// CORS site that requires real target URL
+var CORS_URL = "https://cors-anywhere.herokuapp.com/";
+
 /* fadeIn Animation */
 function fadeIn(e) {
     var ms = 300;
@@ -232,7 +237,7 @@ function fadeOut(e) {
 }
 
 /* set eventListener when click another magazine */
-function setEventOnboardBtn(parent){
+function initBoardBtn(parent){
     [].forEach.call(parent.querySelectorAll("div.board-btn > a"), function(btn){
         btn.addEventListener("click", function(e){
             e.preventDefault();
@@ -240,8 +245,8 @@ function setEventOnboardBtn(parent){
             document.querySelectorAll("div.view4")[0].remove();
             document.querySelectorAll("div.board-btn")[0].remove();
 
-            var tHref = btn.href;
-            loadArticlesInMagazine(tHref.substr(tHref.lastIndexOf("/")+1));
+            var targetHref = btn.href;
+            loadArticlesInMagazine(targetHref.replace(/\D+/g, ""));
         }, false);
     });
 }
@@ -289,8 +294,8 @@ function loadArticlesInMagazine(MagazineNum){
     var request = new XMLHttpRequest(),
         resp = "",
         htmlEl = document.createElement("html"),
-        url = "https://cors-anywhere.herokuapp.com/"
-             + "https://dbr.donga.com/magazine/mcontents/type/list/pub_number/"
+        url = CORS_URL
+             + "https://dbr.donga.com/magazine/mcontents/pub_number/"
              + MagazineNum;
 
     request.open('GET', url, true);
@@ -307,7 +312,7 @@ function loadArticlesInMagazine(MagazineNum){
             fadeOut(loadingEl);
             fadeIn(articleListEl);
 
-            setEventOnboardBtn(articleListEl);
+            initBoardBtn(articleListEl);
             setEventOnArticle(articleListEl);
         }else{
             console.log("We reached our target server, but it returned an error");
@@ -331,7 +336,7 @@ function loadArticle(viewUrl){
         paramArr = viewUrl.match(/[0-9]+/g),
         param1 = paramArr[0],
         param2 = paramArr[1],
-        url = "https://cors-anywhere.herokuapp.com/"
+        url = CORS_URL
             + "https://dbr.donga.com/article/pop_print/"+param1+"/article_no/"+param2;
 
     //remove previous article
@@ -346,7 +351,7 @@ function loadArticle(viewUrl){
             resp = resp.replace(/="\//g, "=\"https://dbr.donga.com/");
             resp = resp.replace(/[sS][rR][cC]=["][^"]*"/g, "data-$&");
             resp = resp.replace(/<img[^>]*>/g, "<div class='img-wrapper'>$&</div>");
-            resp = resp.replace(/color: #993300;/g, "color : #d44600;");
+            resp = resp.replace(/color: #993300;/g, "color : #ff5400;");
             htmlEl.innerHTML = resp;
 
             articleEl.appendChild(htmlEl.querySelectorAll("div.top")[0]); //header
@@ -369,7 +374,9 @@ function loadArticle(viewUrl){
     request.send();
 }
 
+/* init page */
 window.onload = function() {
+    fadeOut(document.getElementById("grid_article"));
     loadArticlesInMagazine("");
 }
 
