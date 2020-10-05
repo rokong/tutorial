@@ -22,3 +22,4 @@ from ROKAF CKIS _(Cyber-Knowledge-Information-Space)_
 1. add postgresql in docker-compose.yml
 1. connect psql from spring project
 1. add pgadmin4 in docker-compose.yml
+1. migrate tomcat to wildfly
