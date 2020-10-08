@@ -18,8 +18,21 @@ from ROKAF CKIS _(Cyber-Knowledge-Information-Space)_
 
 ## 201005 TODO
 1. initial commit at github repository `bean-cafe-project`
-1. add `TODO.md` in new repository
+
+## 201006 TODO
+1. add pgadmin4 in docker-compose.yml
+1. config internal network between containers in docker-compose.yml
+
+## 201007 TODO
 1. add postgresql in docker-compose.yml
 1. connect psql from spring project
-1. add pgadmin4 in docker-compose.yml
+
+## 201008 TODO
 1. migrate tomcat to wildfly
+1. add remote -> (host)/.m2/repository repository in maven
+1. how to debug dockerfile build
+
+---
+## reference
+- **wildfly-docker logging** https://goldmann.pl/blog/2014/07/18/logging-with-the-wildfly-docker-image/
+- **wildfly-docker customizing** https://goldmann.pl/blog/2014/07/23/customizing-the-configuration-of-the-wildfly-docker-image/
