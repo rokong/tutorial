@@ -29,8 +29,9 @@ from ROKAF CKIS _(Cyber-Knowledge-Information-Space)_
 
 ## 201008 TODO
 1. migrate tomcat to wildfly
-1. add remote -> (host)/.m2/repository repository in maven
-1. how to debug dockerfile build
+
+## 201009 TODO
+1. management console and remote debug in wildfly
 
 ---
 ## reference
