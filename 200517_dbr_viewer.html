@@ -21,18 +21,20 @@
 
 body{
     margin: 0;
-    font-size: 2vw;
+    font-size: 18px;
     font-weight: 400;
     line-height: 1.5;
     text-align: left;
     color: #d9d9d9;
     background-color: #1e1f21;
+    font-family: HelveticaNeue,AppleSDGothicNeo-Regular,sans-serif;
 }
 
+/* main > magazine header */
 .magazine_info {
-    padding: 0px 40px;
-    padding-bottom: 20px;
+    margin: 10px 0px;
     border-bottom: 5px #6c757d solid;
+    padding: 0px 15px 10px 15px;
 }
 
 .magazine_info > p{
@@ -44,28 +46,27 @@ body{
 }
 
 .magazine_info > p.title {
-    font-size: 32px;
-    font-weight: bold;
+    font-weight: normal;
+    font-size: 1.5em;
+    letter-spacing: -0.05em;
 }
 
 .magazine_info > p.con {
     color: #6c757d;
-    font-size: 14px;
-    line-height: 1.2;
 }
 
+/* main > article context */
 .article_list {
     border-bottom: 5px #6c757d solid;
 }
 
 .article_list > ul {
     list-style-type: none;
-    margin-block-start: 1em;
-    margin-block-end: 2em;
-    margin-inline-start: 0;
-    margin-inline-end: 0;
-    padding-inline-start: 2em;
-    padding-inline-end: 2em;
+    margin-block-start: 15px;
+    margin-block-end: 30px;
+    margin-inline-start: 15px;
+    margin-inline-end: 15px;
+    padding-inline-start: 0px;
 }
 
 .article_list > ul > li {
@@ -80,7 +81,6 @@ body{
 }
 
 .article_list > ul > li > a > span.category {
-    font-size: 12px;
     color: #17a2b8;
     padding-right: 0.2rem;
     letter-spacing: -0.1rem;
@@ -88,47 +88,53 @@ body{
 
 .article_list > ul > li > a > span.name {
     color: #6c757d;
-    font-size: 12px;
 }
 
+/* main > footer */
 .board-btn {
-    padding: 1.5rem 1rem 2rem 1rem;
+    padding: 15px;
 }
 
 .board-btn > a {
     text-align: center;
-    padding: 0.5rem 2rem;
-    font-weight: bold;
+    padding: 0.2em 1em;
     box-sizing: border-box;
     border: 1px solid #6c757d;
-    font-size: 1rem;
     text-decoration: none;
     color: unset;
-    margin: 0.5rem;
 }
 
 .board-btn > a:nth-child(1) {
-    margin-right: 0;
+    margin-left: 0;
 }
 
 .board-btn > a:nth-child(2) {
     display: none;
 }
 
+/* images in article */
 .img-wrapper {
-    width: 7rem;
-    height: 7rem;
-    background-color: #d9d9d9;
+    width: 5em;
+    height: 5em;
+    border-radius: 1em;
+    background-color: #8c8c8c;
     text-align: center;
 }
 
-#grid_article {
-    margin: 1rem;
+.img-wrapper > img {
+    max-width: 100%;
 }
 
+/* outline of article */
+#grid_article {
+    margin: 0px 15px 10px 15px;
+    padding-top: 55px;
+}
+
+/* article header */
 #grid_article > div.top {
-    padding-bottom: 1rem;
-    margin-bottom: 2rem;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
     border-bottom: 1px #d9d9d9 solid;
 }
 
@@ -137,15 +143,22 @@ body{
 }
 
 #grid_article > div.top > h4.title {
-    font-size: 5vw;
+    /* title */
+    font-weight: normal;
+    font-size: 1.5em;
+    letter-spacing: -0.08em;
+    line-height: 1.2em;
 }
 
 #grid_article > div.top > p.publish-ho {
-    font-size: 1.5vw;
+    /* article info */
+    font-size: 0.9em;
+    margin: 10px 0px;
+    text-align: right;
 }
 
-#grid_articleNav{
-    display: none;
+/* sticky top of article  */
+#article_nav{
     width: 100%;
     background-color: #2c2d30;
     position: fixed;
@@ -155,34 +168,36 @@ body{
     height: auto;
 }
 
-#grid_articleNav > #back_btn {
-    font-size: 2.5vw;
-    padding: 1vh;
+#article_nav > #back_btn {
+    padding: 5px 10px;
     width: fit-content;
     cursor: pointer;
 }
 
-#grid_articleNav > #progress {
+#article_nav > #progress {
     clear: both;
-    height: 8px;
+    height: 5px;
     line-height: 0;
     background-color: #ddd;
     overflow: hidden;
 }
 
-#grid_articleNav > #progress > #ing {
+#article_nav > #progress > #ing {
     display: block;
-    height: 8px;
+    height: inherit;
     line-height: 0;
     background-color: #ff9900;
 }
 </style>
 </head>
 <body>
-    <div id="grid_loadingGraphic" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div id="grid_loadingGraphic" class="lds-roller">
+        <div></div><div></div><div></div><div></div>
+        <div></div><div></div><div></div><div></div>
+    </div>
     <div id="grid_articleList"></div>
     <div id="grid_article">
-        <div id="grid_articleNav">
+        <div id="article_nav">
             <div id="back_btn">&#9776;&#9776;</div>
             <div id="progress">
                 <span id="ing"></span>
@@ -280,9 +295,13 @@ function setEventOnImageWrapper(parent){
 }
 
 /* article -> articleList */
-document.querySelectorAll("#grid_articleNav > #back_btn")[0].addEventListener("click", function(e){
+document.querySelector("#article_nav > #back_btn")
+        .addEventListener("click", function(e){
     fadeOut(document.getElementById("grid_article"));
     fadeIn(document.getElementById("grid_articleList"));
+
+    //change URL
+    window.history.pushState(null, "DBR Pub Viewer", "#");
 });
 
 /* load article lists in magazine by its number */
@@ -311,6 +330,9 @@ function loadArticlesInMagazine(MagazineNum){
             articleListEl.appendChild(htmlEl.querySelectorAll("div.view4")[0]); //ArticleList
             articleListEl.appendChild(htmlEl.querySelectorAll("div.board-btn")[0]); //MagazinebuttonList
             
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
             fadeOut(loadingEl);
             fadeIn(articleListEl);
 
@@ -359,6 +381,9 @@ function loadArticle(viewUrl){
             articleEl.appendChild(htmlEl.querySelectorAll("div.top")[0]); //header
             articleEl.appendChild(htmlEl.querySelectorAll("div.print-word")[0]); //article
 
+            //initialize progress bar
+            articleEl.querySelector("#article_nav #progress #ing").style.width = "0%";
+
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
 
@@ -366,6 +391,11 @@ function loadArticle(viewUrl){
             fadeIn(document.getElementById("grid_article"));
 
             setEventOnImageWrapper(articleEl);
+
+            //change URL
+            //var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?foo=bar';
+            //window.history.pushState("object or string", "Title", "/new-url");
+            window.history.pushState(null, null, "#/"+param1+"/"+param2);
         }else{
             console.log("We reached our target server, but it returned an error");
         }
@@ -387,15 +417,17 @@ window.onscroll = function () {
     var winScroll = document.body.scrollTop || document.documentElement.scrollTop,
         height = document.documentElement.scrollHeight - document.documentElement.clientHeight,
         scrolled = (winScroll / height) * 100,
-        navEl = document.getElementById("grid_articleNav");
+        navEl = document.getElementById("article_nav");
 
-    if(winScroll > 250){
+    /*
+    if(winScroll > 150){
         navEl.style.display = "block";
     }else{
         navEl.style.display = "none";
     }
+    */
 
-    document.querySelectorAll("#grid_articleNav > #progress > #ing")[0].style.width = scrolled + "%";    
+    navEl.querySelector("#ing").style.width = scrolled + "%";
 };
 </script>
 </body>
